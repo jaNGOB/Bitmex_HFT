@@ -63,24 +63,24 @@ class DataBase(object):
             if len(sub_ticks) > 1:
                 for n in range(len(sub_ticks)):
                     temp = sub_ticks[n]
-                    temp['time'] = timestamp
+                    temp['index'] = timestamp
                     self.data.append(temp)
                     self.key_mapper[temp['id']] = temp['price']
             else:
                 temp = sub_ticks[0]
-                temp['time'] = timestamp
+                temp['index'] = timestamp
                 self.data.append(temp)
                 self.key_mapper[temp['id']] = temp['price']
         else:
             if len(sub_ticks) > 1:
                 for n in range(len(sub_ticks)):
                     temp = sub_ticks[n]
-                    temp['time'] = timestamp
+                    temp['index'] = timestamp
                     temp['price'] = self.key_mapper[temp['id']]
                     self.data.append(temp)
             else:
                 temp = sub_ticks[0]
-                temp['time'] = timestamp
+                temp['index'] = timestamp
                 temp['price'] = self.key_mapper[temp['id']]
                 self.data.append(temp)
                 self.key_mapper[temp['id']] = temp['price']
@@ -88,3 +88,4 @@ class DataBase(object):
         if self.counter % self.batch_size == 0:
             self.logger.info('{} Ticks Stored'.format(self.counter))
             self.library.write('BTCUSD', self.data)
+            self.data.clear()

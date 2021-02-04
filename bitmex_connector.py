@@ -76,8 +76,8 @@ class BitmexBTCWebsocket:
         
         if 'subscribe' in message:
             self.logger.info("Subscribed to %s." % message['subscribe'])
-
-        self.db.new_tick(message)
+        else:
+            self.db.new_tick(message)
 
     def _on_open(self):
         """

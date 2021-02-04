@@ -11,11 +11,19 @@ btc_ws = BitmexBTCWebsocket()
 
 
 def handler(sig, frame):
+	"""
+	Handler function which allows for Ctrl+C stopping of the program. 
+	This will send the exit command to the websocket and closes it.
+	"""
 	logger.info(" This is the end !")
 	btc_ws.exit()
 	exit(0)
 
 def main():
+	"""
+	Main function which starts up the websocket and runs indefinitely until 
+	stopped by Ctrl+C or Fatal Error.
+	"""
 	logger.info('Warming up the Engine')
 	first = True
 	while btc_ws.ws.sock.connected:

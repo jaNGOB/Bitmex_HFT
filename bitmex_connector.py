@@ -30,10 +30,16 @@ class BitmexBTCWebsocket:
 
 
     def exit(self):
-        '''Call this to exit - will close websocket.'''
+        '''
+        Call to close the websocket.
+        '''
         self.ws.close()
         
     def _connect(self):
+        """
+        Connect to the L2 Orderbook of XBTUSD from Bitmex. 
+        Callbacks are defined and the websocket is opened.
+        """
         self.logger.debug("Starting thread")
         self.ws = websocket.WebSocketApp('wss://www.bitmex.com/realtime?subscribe=orderBookL2:XBTUSD',
                                          on_message=self._on_message,
@@ -57,6 +63,13 @@ class BitmexBTCWebsocket:
                 'Couldn\'t connect to WS! Exiting.')
 
     def _on_message(self, message):
+        """
+        Callback from open websocket if a message arrives from the exchange.
+        This message is usually a tick and is first unpacked using json.
+        It is then passed to the database where the tick will be processed further and saved.
+
+        :params message: Incoming message from Bitmex.
+        """
 
         message = json.loads(message)
         # self.logger.info(message)
@@ -67,13 +80,21 @@ class BitmexBTCWebsocket:
         self.db.new_tick(message)
 
     def _on_open(self):
+        """
+        Websocket callback when it is opened.
+        """
         self.logger.debug("Websocket Opened.")
 
     def _on_close(self):
+        """
+        Websocket callback when it is closed.
+        """
         self.logger.info('Websocket Closed')
 
     def _on_error(self, error):
-        'Called on fatal websocket errors. We exit on these.'
+        """
+        Called on fatal websocket errors.
+        """
         self.logger.error("Error : %s" % error)
     
 """

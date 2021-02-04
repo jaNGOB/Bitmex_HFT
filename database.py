@@ -9,6 +9,12 @@ logging.basicConfig(
 
 class DataBase(object):
     def __init__(self, no_db):
+        """
+        Initialize the object by creating empty lists, and defining a location to store the data.
+        This can be changed but is naturally allocated to localhost. 
+
+        :param no_db: Bool if there is already a database initiated or if one should be created.
+        """
 
         self.logger = logging.getLogger(__name__)
 
@@ -27,14 +33,14 @@ class DataBase(object):
 
     def create_db(self):
         """
-        Create a new database library.
+        Create a new database library if no_db = True.
         """
         self.store.initialize_library('Tick_store', lib_type=TICK_STORE)
         self.logger.info('New db created.')
 
     def connect_db(self):
         """
-        Connect to a existing library.
+        Connect to a existing library called Tick_store by default.
         """
         self.library = self.store['Tick_store']
         self.logger.info('Connection to db established.')
@@ -44,6 +50,8 @@ class DataBase(object):
         Process incoming ticks from Bitmex.
         Save them into a list called "data" and if the batch size is reached,
         write them to the arctic library.
+
+        :param tick: incoming tick from Bitmex which can contain multiple trades/changes at once.
         """
         action = tick['action']
         sub_ticks = tick['data']

@@ -1,4 +1,4 @@
-from bitmex_connector import BitmexBTCWebsocket
+from data.bitmex_connector import BitmexBTCWebsocket
 from dateutil.parser import parse
 from signal import signal, SIGINT
 from time import sleep

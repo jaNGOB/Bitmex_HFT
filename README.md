@@ -2,7 +2,7 @@
 
 The goal of this project is to explore the market microstructure of Bitcoin traded on the Bitmex Exchange. 
 
-1. First, Dependencies must be installed to run any of the code.
+## 1. First, Dependencies must be installed to run any of the code.
 
 Pip install:
 ```
@@ -12,13 +12,13 @@ Websocket
 Json
 ```
 
-2. Next, the data is collected and stored in a Arctic Tick Database by running main.py.
+## 2. Next, the data is collected and stored in a Arctic Tick Database by running main.py.
 
-3. The Orderbook is recreated and visualized in the EDA notebook.
+## 3. The Orderbook is recreated and visualized in the EDA notebook.
 
 
-References
+## 4. References
 
-[Limit Order Book Visualizations](http://parasec.net/transmission/order-book-visualisation/#data) by Phil Stubbings
+* [Limit Order Book Visualizations](http://parasec.net/transmission/order-book-visualisation/) by Phil Stubbings
 
-[Visualizing Bitcoin Order Book](https://rickyhan.com/jekyll/update/2017/09/24/visualizing-order-book.html) by Ricky Han
+* [Visualizing Bitcoin Order Book](https://rickyhan.com/jekyll/update/2017/09/24/visualizing-order-book.html) by Ricky Han

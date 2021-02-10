@@ -1,3 +1,10 @@
+#
+# Jan Gobeli
+# 02.2021
+# This file connects to the Bitmex websocket which in turn subscribes to tick data and stores
+# it in a Arctic db.
+# 
+
 from data.bitmex_connector import BitmexBTCWebsocket
 from dateutil.parser import parse
 from signal import signal, SIGINT
@@ -28,7 +35,6 @@ def main():
 	first = True
 	while btc_ws.ws.sock.connected:
 		if first:
-			logger.info('Base values initiated, establishing connection to the exchange.')
 			logger.info('Connection established!')
 			logger.info('May the force be with us')
 			first = False

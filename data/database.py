@@ -1,3 +1,10 @@
+#
+# Jan Gobeli
+# 02.2021
+# This file initiates a new mongodb or connects to an existing one on 'localhost'.
+# It also stores new ticks in a temporary list and saves them in the db when the batch_size is reached.
+# 
+
 from arctic import Arctic, TICK_STORE
 import datetime as dt
 import pytz as tz

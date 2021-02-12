@@ -6,8 +6,10 @@
 
 import pandas as pd
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
-def get_lvl_color(value, max_, lower_thres = 0.2, upper_thers = 0.6):
+
+def get_lvl_color(value, max_, colmap):
     """
     This function creates the colors for the orderbook plots. If the size of the the sum of orders 
     is big, it will be bright/visible otherwise dark to blend in with the background of the plot.
@@ -19,17 +21,35 @@ def get_lvl_color(value, max_, lower_thres = 0.2, upper_thers = 0.6):
 
     :return: RGB color code used for the plot.
     """
+
     if value == None:
         return (0, 0, 0)
+    
+    elif value >= max_:
+        return colmap(1)
+
     lvl = value / max_
-    if lvl >= upper_thers:
+    return colmap(lvl)
+
+    """
+    lvl = value / max_
+
+    jet = cm.get_cmap('jet', 12)
+
+    if lvl >= upper_thres:
         return (0, 1, 1)
-    elif lvl > lower_thres or lvl < upper_thers:
-        lvl_inside = lvl / upper_thers
+
+    elif lvl >= mid_thres or lvl < upper_thres:
+        lvl_inside = lvl / upper_thres
         return (0, lvl_inside, lvl_inside)
+
+    elif lvl > lower_thres or lvl < mid_thres:
+        lvl_inside = lvl / mid_thres
+        return (lvl_inside, lvl_inside, 0)
+        
     else:
         return (0, 0, 0)
-    
+    """
 
 def create_orderbook(tmp):
     """
@@ -113,7 +133,7 @@ def get_bid_ask(tmp, orderbook):
     return orderbook, best_bid, best_ask, time
 
 
-def create_levels(df, price_lvl, max_size, end):
+def create_levels(df, price_lvl, max_size, end, colmap):
     """
     Create all necessary lists to plot the levels and their size in the orderbook.
 
@@ -127,6 +147,7 @@ def create_levels(df, price_lvl, max_size, end):
     :return x_end: (list) datetimes of when the above order ends.
     :return col: (list) RGB colors of what color should be allocated.
     """
+
     y = []
     x_start = []
     x_end = []
@@ -142,17 +163,17 @@ def create_levels(df, price_lvl, max_size, end):
                     y.append(plvl)
                     x_start.append(tmp.index[t])
                     x_end.append(end)
-                    col.append(get_lvl_color(tmp['size'][t], max_size))
+                    col.append(get_lvl_color(tmp['size'][t], max_size, colmap))
                 else:
                     y.append(plvl)
                     x_start.append(tmp.index[t])
                     x_end.append(tmp.index[t+1])
-                    col.append(get_lvl_color(tmp['size'][t], max_size))
+                    col.append(get_lvl_color(tmp['size'][t], max_size, colmap))
         else:
             y.append(plvl)                
             x_start.append(tmp.index[0])
             x_end.append(end)
-            col.append(get_lvl_color(tmp['size'][0], max_size))
+            col.append(get_lvl_color(tmp['size'][0], max_size, colmap))
     if len(y) == len(x_start) == len(x_end) == len(col):
         return y, x_start, x_end, col
     else:

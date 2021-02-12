@@ -10,7 +10,7 @@ import traceback
 import datetime
 import pandas as pd
 from dateutil.parser import parse
-from database import DataBase
+from data.database import DataBase
 from time import sleep
 import logging
 import json

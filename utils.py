@@ -9,7 +9,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 
-def get_lvl_color(value, max_, colmap):
+def get_lvl_color(value, max_, min_, colmap):
     """
     This function creates the colors for the orderbook plots. If the size of the the sum of orders 
     is big, it will be bright/visible otherwise dark to blend in with the background of the plot.
@@ -24,9 +24,12 @@ def get_lvl_color(value, max_, colmap):
 
     if value == None:
         return (0, 0, 0)
+
+    elif value <= min_:
+        return (0, 0, 0)
     
     elif value >= max_:
-        return colmap(1)
+        return colmap(1.0)
 
     lvl = value / max_
     return colmap(lvl)
@@ -133,7 +136,7 @@ def get_bid_ask(tmp, orderbook):
     return orderbook, best_bid, best_ask, time
 
 
-def create_levels(df, price_lvl, max_size, end, colmap):
+def create_levels(df, price_lvl, max_size, min_size, end, colmap):
     """
     Create all necessary lists to plot the levels and their size in the orderbook.
 
@@ -163,17 +166,17 @@ def create_levels(df, price_lvl, max_size, end, colmap):
                     y.append(plvl)
                     x_start.append(tmp.index[t])
                     x_end.append(end)
-                    col.append(get_lvl_color(tmp['size'][t], max_size, colmap))
+                    col.append(get_lvl_color(tmp['size'][t], max_size, min_size, colmap))
                 else:
                     y.append(plvl)
                     x_start.append(tmp.index[t])
                     x_end.append(tmp.index[t+1])
-                    col.append(get_lvl_color(tmp['size'][t], max_size, colmap))
+                    col.append(get_lvl_color(tmp['size'][t], max_size, min_size, colmap))
         else:
             y.append(plvl)                
             x_start.append(tmp.index[0])
             x_end.append(end)
-            col.append(get_lvl_color(tmp['size'][0], max_size, colmap))
+            col.append(get_lvl_color(tmp['size'][0], max_size, min_size, colmap))
     if len(y) == len(x_start) == len(x_end) == len(col):
         return y, x_start, x_end, col
     else:

@@ -47,7 +47,7 @@ class BitmexBTCWebsocket:
         Callbacks are defined and the websocket is opened.
         """
         self.logger.debug("Starting thread")
-        self.ws = websocket.WebSocketApp('wss://www.bitmex.com/realtime?subscribe=orderBookL2:XBTUSD',
+        self.ws = websocket.WebSocketApp('wss://www.bitmex.com/realtime',
                                          on_message=self._on_message,
                                          on_close=self._on_close,
                                          on_open=self._on_open,
@@ -89,6 +89,7 @@ class BitmexBTCWebsocket:
         """
         Websocket callback when it is opened.
         """
+        self.ws.send('{"op":"subscribe", "args":["trade:XBTUSD", "orderBookL2:XBTUSD"]}')
         self.logger.debug("Websocket Opened.")
 
     def _on_close(self):

@@ -26,7 +26,9 @@ class DataBase(object):
         self.logger = logging.getLogger(__name__)
 
         self.data = list()
+        self.trades = list()
         self.counter = 0
+        self.trade_count = 0
         self.batch_size = 10000
         
         self.key_mapper = {}
@@ -94,5 +96,32 @@ class DataBase(object):
             
         if self.counter % self.batch_size == 0:
             self.logger.info('{} Ticks Stored'.format(self.counter))
-            self.library.write('BTCUSD', self.data)
+            self.library.write('BTCUSD_ob', self.data)
             self.data.clear()
+
+    def new_trade(self, trade):
+        """
+        Process incoming trades from Bitmex.
+        Save them into a list called "trades" and if the batch size is reached,
+        write them to the arctic library.
+
+        :param trade: incoming trades from Bitmex.
+        """
+        sub_ticks = trade['data']
+        self.trade_count += 1
+
+        if  len(sub_ticks) > 1:
+            for n in range(len(sub_ticks)):
+                temp = sub_ticks[n]
+                temp['index'] = temp['timestamp']
+                self.trades.append(temp)
+        else:
+            temp = sub_ticks[0]
+            temp['index'] = temp['timestamp']
+            self.trades.append(temp)
+        
+        if self.counter % self.batch_size == 0:
+            self.logger.info('{} Trades Stored'.format(self.counter))
+            self.library.write('BTCUSD_trades', self.data)
+            self.data.clear()
+

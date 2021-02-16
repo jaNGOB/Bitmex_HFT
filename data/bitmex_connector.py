@@ -79,11 +79,15 @@ class BitmexBTCWebsocket:
 
         message = json.loads(message)
         # self.logger.info(message)
-        
+        table = message['table']
+
         if 'subscribe' in message:
             self.logger.info("Subscribed to %s." % message['subscribe'])
-        else:
+
+        elif table == 'orderBookL2':
             self.db.new_tick(message)
+        elif table == 'trade':
+            self.db.new_trade(message)
 
     def _on_open(self):
         """

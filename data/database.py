@@ -25,11 +25,13 @@ class DataBase(object):
 
         self.logger = logging.getLogger(__name__)
 
+        self.utc = tz.utc
+
         self.data = list()
         self.trades = list()
         self.counter = 0
         self.trade_count = 0
-        self.batch_size = 10000
+        self.batch_size = 1000
         
         self.key_mapper = {}
 
@@ -61,7 +63,7 @@ class DataBase(object):
         write them to the arctic library.
 
         :param tick: incoming tick from Bitmex which can contain multiple trades/changes at once.
-        """
+        
         action = tick['action']
         sub_ticks = tick['data']
         timestamp = dt.datetime.now(tz=tz.utc)
@@ -98,6 +100,7 @@ class DataBase(object):
             self.logger.info('{} Ticks Stored'.format(self.counter))
             self.library.write('BTCUSD_ob', self.data)
             self.data.clear()
+        """
 
     def new_trade(self, trade):
         """
@@ -113,15 +116,17 @@ class DataBase(object):
         if  len(sub_ticks) > 1:
             for n in range(len(sub_ticks)):
                 temp = sub_ticks[n]
-                temp['index'] = temp['timestamp']
+                time = dt.datetime.strptime(temp['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                temp['index'] = self.utc.localize(time)
                 self.trades.append(temp)
         else:
             temp = sub_ticks[0]
-            temp['index'] = temp['timestamp']
+            time = dt.datetime.strptime(temp['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
+            temp['index'] = self.utc.localize(time)
             self.trades.append(temp)
         
-        if self.counter % self.batch_size == 0:
-            self.logger.info('{} Trades Stored'.format(self.counter))
-            self.library.write('BTCUSD_trades', self.data)
-            self.data.clear()
+        if self.trade_count % self.batch_size == 0:
+            self.logger.info('{} Trades Stored'.format(self.trade_count))
+            self.library.write('BTCUSD_trades', self.trades)
+            self.trades.clear()
 

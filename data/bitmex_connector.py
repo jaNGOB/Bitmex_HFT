@@ -7,10 +7,11 @@
 import websocket
 import threading
 import traceback
-import datetime
 import pandas as pd
 from dateutil.parser import parse
 from data.database import DataBase
+import datetime as dt
+import pytz as tz
 from time import sleep
 import logging
 import json
@@ -80,14 +81,15 @@ class BitmexBTCWebsocket:
         message = json.loads(message)
         # self.logger.info(message)
         table = message['table']
+        time = dt.datetime.now(tz=tz.utc)
 
         if 'subscribe' in message:
             self.logger.info("Subscribed to %s." % message['subscribe'])
 
         elif table == 'orderBookL2':
-            self.db.new_tick(message)
+            self.db.new_tick(message, time)
         elif table == 'trade':
-            self.db.new_trade(message)
+            self.db.new_trade(message, time)
 
     def _on_open(self):
         """

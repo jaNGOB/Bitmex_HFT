@@ -6,8 +6,6 @@
 # 
 
 from arctic import Arctic, TICK_STORE
-import datetime as dt
-import pytz as tz
 import logging
 
 logging.basicConfig(
@@ -25,13 +23,11 @@ class DataBase(object):
 
         self.logger = logging.getLogger(__name__)
 
-        self.utc = tz.utc
-
         self.data = list()
         self.trades = list()
         self.counter = 0
         self.trade_count = 0
-        self.batch_size = 1000
+        self.batch_size = 10000
         
         self.key_mapper = {}
 
@@ -56,17 +52,16 @@ class DataBase(object):
         self.library = self.store['Tick_store']
         self.logger.info('Connection to db established.')
 
-    def new_tick(self, tick):
+    def new_tick(self, tick, time):
         """
         Process incoming ticks from Bitmex.
         Save them into a list called "data" and if the batch size is reached,
         write them to the arctic library.
 
         :param tick: incoming tick from Bitmex which can contain multiple trades/changes at once.
-        
+        """
         action = tick['action']
         sub_ticks = tick['data']
-        timestamp = dt.datetime.now(tz=tz.utc)
         self.counter += 1
         #self.logger.info(self.key_mapper)
 
@@ -74,24 +69,24 @@ class DataBase(object):
             if len(sub_ticks) > 1:
                 for n in range(len(sub_ticks)):
                     temp = sub_ticks[n]
-                    temp['index'] = timestamp
+                    temp['index'] = time
                     self.data.append(temp)
                     self.key_mapper[temp['id']] = temp['price']
             else:
                 temp = sub_ticks[0]
-                temp['index'] = timestamp
+                temp['index'] = time
                 self.data.append(temp)
                 self.key_mapper[temp['id']] = temp['price']
         else:
             if len(sub_ticks) > 1:
                 for n in range(len(sub_ticks)):
                     temp = sub_ticks[n]
-                    temp['index'] = timestamp
+                    temp['index'] = time
                     temp['price'] = self.key_mapper[temp['id']]
                     self.data.append(temp)
             else:
                 temp = sub_ticks[0]
-                temp['index'] = timestamp
+                temp['index'] = time
                 temp['price'] = self.key_mapper[temp['id']]
                 self.data.append(temp)
                 self.key_mapper[temp['id']] = temp['price']
@@ -100,9 +95,9 @@ class DataBase(object):
             self.logger.info('{} Ticks Stored'.format(self.counter))
             self.library.write('BTCUSD_ob', self.data)
             self.data.clear()
-        """
 
-    def new_trade(self, trade):
+
+    def new_trade(self, trade, time):
         """
         Process incoming trades from Bitmex.
         Save them into a list called "trades" and if the batch size is reached,
@@ -116,13 +111,11 @@ class DataBase(object):
         if  len(sub_ticks) > 1:
             for n in range(len(sub_ticks)):
                 temp = sub_ticks[n]
-                time = dt.datetime.strptime(temp['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                temp['index'] = self.utc.localize(time)
+                temp['index'] = time
                 self.trades.append(temp)
         else:
             temp = sub_ticks[0]
-            time = dt.datetime.strptime(temp['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
-            temp['index'] = self.utc.localize(time)
+                temp['index'] = time
             self.trades.append(temp)
         
         if self.trade_count % self.batch_size == 0:

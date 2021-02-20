@@ -1,6 +1,6 @@
 # Bitmex_HFT
 
-The goal of this project is to explore the market microstructure of Bitcoin traded on the Bitmex Exchange. 
+The goal of this project is to explore the market microstructure of Bitcoin traded on BitMEX. 
 
 ## 1. Dependencies 
 First, dependencies must be installed to run any of the code.
@@ -14,10 +14,12 @@ Json
 ```
 
 ## 2. Data
-Next, the data is collected and stored in a Arctic Tick Database by running main.py.
+Next, the data is collected and stored in a Arctic Tick Database by running main.py. 
+This includes two libraries, one for trades and another for quotes.
 
 ## 3. Analysis
-The Orderbook is recreated and visualized in the EDA notebook.
+The Orderbook is recreated and visualized in the Visualizations jupyter notebook which is what was used for Part 1 of the [article] 
+(https://www.linkedin.com/feed/update/urn:li:activity:6767517983683170304/).
 
 
 ## 4. References

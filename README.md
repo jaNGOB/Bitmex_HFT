@@ -18,7 +18,7 @@ Next, the data is collected and stored in a Arctic Tick Database by running main
 This includes two libraries, one for trades and another for quotes.
 
 ## 3. Analysis
-The Orderbook is recreated and visualized in the Visualizations jupyter notebook which is what was used for Part 1 of the [article](https://www.linkedin.com/feed/update/urn:li:activity:6767517983683170304/).
+The Orderbook is recreated and visualized in the Visualizations jupyter notebook which is what was used for Part 1 of the [article](https://www.linkedin.com/pulse/bitcoin-hft-part-1-data-ob-visualizations-jan-gobeli/).
 
 
 ## 4. References

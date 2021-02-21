@@ -115,7 +115,7 @@ class DataBase(object):
                 self.trades.append(temp)
         else:
             temp = sub_ticks[0]
-                temp['index'] = time
+            temp['index'] = time
             self.trades.append(temp)
         
         if self.trade_count % self.batch_size == 0:
